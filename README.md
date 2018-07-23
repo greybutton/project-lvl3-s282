@@ -1,5 +1,9 @@
 [![Build Status][build-badge]][build]
 
+Netlify: [https://naughty-swanson-1d6428.netlify.com/](https://naughty-swanson-1d6428.netlify.com/)
+
+Surge: [http://lyrical-boat.surge.sh/](http://lyrical-boat.surge.sh/)
+
 ## Setup
 
 `make install`
