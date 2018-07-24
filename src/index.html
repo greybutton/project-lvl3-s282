@@ -13,14 +13,19 @@
     <div class="jumbotron">
       <h1 class="display-4">RSS Reader</h1>
       <hr class="my-4">
-      <form>
+      <form id="rss-form">
         <div class="form-group">
-          <input type="text" class="form-control" id="rss" placeholder="Enter RSS">
+          <input type="text" class="form-control" id="rss-input" placeholder="Enter RSS">
+          <div class="invalid-feedback">
+            Please provide a valid link.
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" id="rss-submit">Submit</button>
+        <div id="rss-info"></div>
       </form>
     </div>
   </div>
+  <div id="rss-channels" class="channels"></div>
 </body>
 
 </html>

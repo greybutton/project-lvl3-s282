@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/greybutton/project-lvl3-s282#readme",
   "dependencies": {
-    "bootstrap": "^4.1.2"
+    "axios": "^0.18.0",
+    "bootstrap": "^4.1.2",
+    "validator": "^10.4.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
