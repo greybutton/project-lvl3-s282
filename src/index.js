@@ -1,7 +1,10 @@
+import 'bootstrap';
 import { isURL } from 'validator';
 import axios from 'axios';
 
-import { input, form, renderChannels } from './dom';
+import {
+  input, form, renderChannels, getViewButtons,
+} from './dom';
 import parserRSS from './parsers';
 import uiState from './ui';
 
@@ -11,6 +14,16 @@ const state = {
   inputValue: input.value,
   channelLinks: [],
   channels: [],
+};
+
+const handleClickViewButton = (e) => {
+  const { target } = e;
+  const { title, description } = target.dataset;
+  const post = {
+    title,
+    description,
+  };
+  uiState.postModal = post;
 };
 
 const handleInput = (e) => {
@@ -56,6 +69,8 @@ const handlerSubmit = (e) => {
       state.channels = [channel, ...state.channels];
       state.channelLinks = [...state.channelLinks, value];
       renderChannels(state.channels);
+      const viewButtons = getViewButtons();
+      viewButtons.forEach(button => button.addEventListener('click', handleClickViewButton));
     })
     .catch((error) => {
       console.log(error);

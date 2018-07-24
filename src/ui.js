@@ -6,6 +6,7 @@ import {
   renderInputDisable,
   renderInputEnable,
   renderAppInfo,
+  renderPostModal,
 } from './dom';
 
 const uiState = {
@@ -13,6 +14,7 @@ const uiState = {
   inputValidation: '',
   inputStatus: null,
   inputClear: null,
+  postModal: null,
 };
 
 const { watch } = WatchJS;
@@ -37,6 +39,10 @@ watch(uiState, 'inputStatus', () => {
 watch(uiState, 'inputClear', () => {
   renderInputClear();
   uiState.inputClear = false;
+});
+
+watch(uiState, 'postModal', () => {
+  renderPostModal(uiState.postModal);
 });
 
 export default uiState;

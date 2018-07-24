@@ -1,8 +1,12 @@
+import $ from 'jquery';
+
 const form = document.getElementById('rss-form');
 const input = document.getElementById('rss-input');
 const submit = document.getElementById('rss-submit');
 const info = document.getElementById('rss-info');
 const channelsContainer = document.getElementById('rss-channels');
+const postModalContainer = document.getElementById('rss-post-modal');
+const getViewButtons = () => document.querySelectorAll('button[data-toggle="modal"');
 
 // Input
 
@@ -61,12 +65,54 @@ const renderPostDesctiption = (item) => {
   return descriptionContainer;
 };
 
+const renderPostViewButton = (item) => {
+  const button = document.createElement('button');
+  button.setAttribute('type', 'button');
+  button.setAttribute('data-toggle', 'modal');
+  button.setAttribute('data-title', item.title);
+  button.setAttribute('data-description', item.description);
+  button.classList.add('btn', 'btn-info');
+  button.innerHTML = 'View';
+  return button;
+};
+
+const renderPostModal = (item) => {
+  postModalContainer.innerHTML = '';
+  const modal = `
+    <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="postModalLabel">${item.title}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ${item.description}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  postModalContainer.innerHTML = modal;
+  $('#postModal').modal();
+};
+
 const renderPost = (item) => {
   const postContainer = document.createElement('li');
+  const postHeader = document.createElement('div');
   const title = renderPostTitle(item);
   const description = renderPostDesctiption(item);
+  const viewButton = renderPostViewButton(item);
   postContainer.classList.add('list-group-item');
-  postContainer.append(title);
+  postHeader.classList.add('d-flex', 'justify-content-between');
+  postHeader.append(title);
+  postHeader.append(viewButton);
+  postContainer.append(postHeader);
   postContainer.append(description);
   return postContainer;
 };
@@ -132,10 +178,12 @@ const renderAppInfo = ([status, text]) => {
 export {
   input,
   form,
+  getViewButtons,
   renderInputUpdate,
   renderInputClear,
   renderInputDisable,
   renderInputEnable,
   renderChannels,
   renderAppInfo,
+  renderPostModal,
 };
