@@ -7,7 +7,7 @@ const channelsContainer = document.getElementById('rss-channels');
 // Input
 
 const renderInputUpdate = (state) => {
-  switch (state.inputValidation) {
+  switch (state) {
     case 'invalid':
       info.innerHTML = '';
       input.classList.remove('is-valid');
@@ -21,6 +21,7 @@ const renderInputUpdate = (state) => {
       submit.disabled = false;
       break;
     case 'repeatlink':
+    case '':
       input.classList.remove('is-invalid', 'is-valid');
       submit.disabled = true;
       break;
@@ -34,11 +35,20 @@ const renderInputClear = () => {
   input.classList.remove('is-valid');
 };
 
+const renderInputDisable = () => {
+  input.disabled = true;
+  submit.disabled = true;
+};
+
+const renderInputEnable = () => {
+  input.disabled = false;
+  submit.disabled = false;
+};
+
 // Post
 
 const renderPostTitle = (item) => {
   const titleContainer = document.createElement('a');
-  titleContainer.classList.add('post__title');
   titleContainer.setAttribute('href', item.link);
   titleContainer.setAttribute('target', '_blank');
   titleContainer.innerHTML = item.title;
@@ -47,16 +57,15 @@ const renderPostTitle = (item) => {
 
 const renderPostDesctiption = (item) => {
   const descriptionContainer = document.createElement('div');
-  descriptionContainer.classList.add('post__description');
   descriptionContainer.innerHTML = item.description;
   return descriptionContainer;
 };
 
 const renderPost = (item) => {
-  const postContainer = document.createElement('div');
-  postContainer.classList.add('post');
+  const postContainer = document.createElement('li');
   const title = renderPostTitle(item);
   const description = renderPostDesctiption(item);
+  postContainer.classList.add('list-group-item');
   postContainer.append(title);
   postContainer.append(description);
   return postContainer;
@@ -65,28 +74,38 @@ const renderPost = (item) => {
 // Channel
 
 const renderChannelTitle = (item) => {
-  const titleContainer = document.createElement('div');
-  titleContainer.classList.add('channel__title');
+  const titleContainer = document.createElement('h5');
+  titleContainer.classList.add('card-title');
   titleContainer.innerHTML = item.title;
   return titleContainer;
 };
 
 const renderChannelDesctiption = (item) => {
-  const descriptionContainer = document.createElement('div');
-  descriptionContainer.classList.add('channel__description');
+  const descriptionContainer = document.createElement('h6');
+  descriptionContainer.classList.add('card-subtitle', 'mb-2', 'text-muted');
   descriptionContainer.innerHTML = item.description;
   return descriptionContainer;
 };
 
 const renderChannel = (item) => {
   const channelContainer = document.createElement('div');
-  channelContainer.classList.add('channel');
+  const channelHeader = document.createElement('div');
+  const channelPosts = document.createElement('ul');
+
   const title = renderChannelTitle(item);
   const description = renderChannelDesctiption(item);
-  channelContainer.append(title);
-  channelContainer.append(description);
   const posts = [...item.posts].map(renderPost);
-  posts.map(post => channelContainer.append(post));
+  posts.map(post => channelPosts.append(post));
+
+  channelContainer.classList.add('card');
+  channelHeader.classList.add('card-header');
+  channelPosts.classList.add('list-group', 'list-group-flush');
+
+  channelHeader.append(title);
+  channelHeader.append(description);
+  channelContainer.append(channelHeader);
+  channelContainer.append(channelPosts);
+
   return channelContainer;
 };
 
@@ -104,12 +123,19 @@ const createInfo = (status, text) => {
   return div;
 };
 
-const renderAppInfo = (status, text) => {
+const renderAppInfo = ([status, text]) => {
   info.innerHTML = '';
   const elem = createInfo(status, text);
   info.append(elem);
 };
 
 export {
-  input, form, renderInputUpdate, renderInputClear, renderChannels, renderAppInfo,
+  input,
+  form,
+  renderInputUpdate,
+  renderInputClear,
+  renderInputDisable,
+  renderInputEnable,
+  renderChannels,
+  renderAppInfo,
 };
