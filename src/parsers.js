@@ -8,10 +8,12 @@ const parserRSS = (data) => {
     const [postTitle] = post.getElementsByTagName('title');
     const [postLink] = post.getElementsByTagName('link');
     const [postDescription] = post.getElementsByTagName('description');
+    const [postDate] = post.getElementsByTagName('pubDate');
     return {
       title: postTitle.textContent,
       link: postLink.textContent,
       description: postDescription.textContent,
+      date: postDate.textContent,
     };
   });
   const channel = {
