@@ -1,10 +1,9 @@
 import 'bootstrap';
 import { isURL } from 'validator';
 import axios from 'axios';
+import WatchJS from 'melanke-watchjs';
 
-import {
-  input, form, renderChannels, getViewButtons,
-} from './dom';
+import { input, form, renderChannels } from './dom';
 import parserRSS from './parsers';
 import uiState from './ui';
 
@@ -15,6 +14,8 @@ const state = {
   channelLinks: [],
   channels: [],
 };
+
+const { watch } = WatchJS;
 
 const handleClickViewButton = (e) => {
   const { target } = e;
@@ -65,12 +66,9 @@ const handlerSubmit = (e) => {
       uiState.inputClear = true;
       state.inputValue = '';
       const { data } = response;
-      const { channel } = parserRSS(data);
+      const channel = parserRSS(data);
       state.channels = [channel, ...state.channels];
       state.channelLinks = [...state.channelLinks, value];
-      renderChannels(state.channels);
-      const viewButtons = getViewButtons();
-      viewButtons.forEach(button => button.addEventListener('click', handleClickViewButton));
     })
     .catch((error) => {
       console.log(error);
@@ -81,3 +79,7 @@ const handlerSubmit = (e) => {
 
 input.addEventListener('input', handleInput);
 form.addEventListener('submit', handlerSubmit);
+
+watch(state, 'channels', () => {
+  renderChannels(state.channels, handleClickViewButton);
+});

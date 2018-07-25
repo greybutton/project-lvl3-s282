@@ -19,7 +19,7 @@ const parserRSS = (data) => {
     description: channelDescription.textContent,
     posts,
   };
-  return { channel };
+  return channel;
 };
 
 export default parserRSS;

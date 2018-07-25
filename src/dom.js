@@ -1,25 +1,32 @@
 import $ from 'jquery';
 
-const form = document.getElementById('rss-form');
-const input = document.getElementById('rss-input');
-const submit = document.getElementById('rss-submit');
-const info = document.getElementById('rss-info');
-const channelsContainer = document.getElementById('rss-channels');
-const postModalContainer = document.getElementById('rss-post-modal');
+const getForm = () => document.getElementById('rss-form');
+const getInput = () => document.getElementById('rss-input');
+const getSubmit = () => document.getElementById('rss-submit');
+const getInfoContainer = () => document.getElementById('rss-info');
+const getChannelsContainer = () => document.getElementById('rss-channels');
+const getPostModalContainer = () => document.getElementById('rss-post-modal');
 const getViewButtons = () => document.querySelectorAll('button[data-toggle="modal"');
+
+const form = getForm();
+const input = getInput();
+const submit = getSubmit();
+const infoContainer = getInfoContainer();
+const channelsContainer = getChannelsContainer();
+const postModalContainer = getPostModalContainer();
 
 // Input
 
 const renderInputUpdate = (state) => {
   switch (state) {
     case 'invalid':
-      info.innerHTML = '';
+      infoContainer.innerHTML = '';
       input.classList.remove('is-valid');
       input.classList.add('is-invalid');
       submit.disabled = true;
       break;
     case 'valid':
-      info.innerHTML = '';
+      infoContainer.innerHTML = '';
       input.classList.remove('is-invalid');
       input.classList.add('is-valid');
       submit.disabled = false;
@@ -155,9 +162,15 @@ const renderChannel = (item) => {
   return channelContainer;
 };
 
-const renderChannels = (channels) => {
+const addButtonsHandler = (handler) => {
+  const viewButtons = getViewButtons();
+  viewButtons.forEach(button => button.addEventListener('click', handler));
+};
+
+const renderChannels = (channels, handler) => {
   channelsContainer.innerHTML = '';
   channels.map(renderChannel).map(channel => channelsContainer.append(channel));
+  addButtonsHandler(handler);
 };
 
 // App
@@ -170,15 +183,14 @@ const createInfo = (status, text) => {
 };
 
 const renderAppInfo = ([status, text]) => {
-  info.innerHTML = '';
+  infoContainer.innerHTML = '';
   const elem = createInfo(status, text);
-  info.append(elem);
+  infoContainer.append(elem);
 };
 
 export {
   input,
   form,
-  getViewButtons,
   renderInputUpdate,
   renderInputClear,
   renderInputDisable,
