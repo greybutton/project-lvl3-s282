@@ -1,31 +1,12 @@
 import 'bootstrap';
 import { isURL } from 'validator';
 import axios from 'axios';
-import WatchJS from 'melanke-watchjs';
 
-import { input, form, renderChannels } from './dom';
+import { getInput, getForm } from './dom';
 import parserRSS from './parsers';
-import uiState from './ui';
+import state from './state';
 
 import './index.scss';
-
-const state = {
-  inputValue: input.value,
-  channelLinks: [],
-  channels: [],
-};
-
-const { watch } = WatchJS;
-
-const handleClickViewButton = (e) => {
-  const { target } = e;
-  const { title, description } = target.dataset;
-  const post = {
-    title,
-    description,
-  };
-  uiState.postModal = post;
-};
 
 const handleInput = (e) => {
   const { value } = e.target;
@@ -33,17 +14,17 @@ const handleInput = (e) => {
 
   switch (true) {
     case isURL(value) && state.channelLinks.includes(value):
-      uiState.inputValidation = 'repeatlink';
-      uiState.info = ['warning', 'This link is added.'];
+      state.inputValidation = 'repeatlink';
+      state.info = ['warning', 'This link is added.'];
       break;
     case isURL(value):
-      uiState.inputValidation = 'valid';
+      state.inputValidation = 'valid';
       break;
     case value === '':
-      uiState.inputValidation = '';
+      state.inputValidation = '';
       break;
     default:
-      uiState.inputValidation = 'invalid';
+      state.inputValidation = 'invalid';
       break;
   }
 };
@@ -52,34 +33,30 @@ const handlerSubmit = (e) => {
   e.preventDefault();
   const { inputValue: value } = state;
   if (value === '') {
-    uiState.info = ['warning', 'Empty link.'];
+    state.info = ['warning', 'Empty link.'];
     return;
   }
   const url = `https://cors-anywhere.herokuapp.com/${value}`;
-  uiState.inputStatus = 'disabled';
-  uiState.info = ['info', 'Loading...'];
+  state.inputStatus = 'disabled';
+  state.info = ['info', 'Loading...'];
   axios
     .get(url)
     .then((response) => {
-      uiState.info = ['success', 'Success.'];
-      uiState.inputStatus = 'enabled';
-      uiState.inputClear = true;
+      state.info = ['success', 'Success.'];
+      state.inputStatus = 'enabled';
+      state.inputClear = true;
       state.inputValue = '';
       const { data } = response;
       const channel = parserRSS(data);
       state.channels = [channel, ...state.channels];
-      state.channelLinks = [...state.channelLinks, value];
+      state.channelLinks = [value, ...state.channelLinks];
     })
     .catch((error) => {
       console.log(error);
-      uiState.info = ['warning', 'Error. Try again.'];
-      uiState.inputStatus = 'enabled';
+      state.info = ['warning', 'Error. Try again.'];
+      state.inputStatus = 'enabled';
     });
 };
 
-input.addEventListener('input', handleInput);
-form.addEventListener('submit', handlerSubmit);
-
-watch(state, 'channels', () => {
-  renderChannels(state.channels, handleClickViewButton);
-});
+getInput().addEventListener('input', handleInput);
+getForm().addEventListener('submit', handlerSubmit);

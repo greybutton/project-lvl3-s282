@@ -8,16 +8,12 @@ const getChannelsContainer = () => document.getElementById('rss-channels');
 const getPostModalContainer = () => document.getElementById('rss-post-modal');
 const getViewButtons = () => document.querySelectorAll('button[data-toggle="modal"');
 
-const form = getForm();
-const input = getInput();
-const submit = getSubmit();
-const infoContainer = getInfoContainer();
-const channelsContainer = getChannelsContainer();
-const postModalContainer = getPostModalContainer();
-
 // Input
 
 const renderInputUpdate = (state) => {
+  const input = getInput();
+  const submit = getSubmit();
+  const infoContainer = getInfoContainer();
   switch (state) {
     case 'invalid':
       infoContainer.innerHTML = '';
@@ -42,16 +38,21 @@ const renderInputUpdate = (state) => {
 };
 
 const renderInputClear = () => {
+  const input = getInput();
   input.value = '';
   input.classList.remove('is-valid');
 };
 
 const renderInputDisable = () => {
+  const input = getInput();
+  const submit = getSubmit();
   input.disabled = true;
   submit.disabled = true;
 };
 
 const renderInputEnable = () => {
+  const input = getInput();
+  const submit = getSubmit();
   input.disabled = false;
   submit.disabled = false;
 };
@@ -84,6 +85,7 @@ const renderPostViewButton = (item) => {
 };
 
 const renderPostModal = (item) => {
+  const postModalContainer = getPostModalContainer();
   postModalContainer.innerHTML = '';
   const modal = `
     <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel" aria-hidden="true">
@@ -162,15 +164,10 @@ const renderChannel = (item) => {
   return channelContainer;
 };
 
-const addButtonsHandler = (handler) => {
-  const viewButtons = getViewButtons();
-  viewButtons.forEach(button => button.addEventListener('click', handler));
-};
-
-const renderChannels = (channels, handler) => {
+const renderChannels = (channels) => {
+  const channelsContainer = getChannelsContainer();
   channelsContainer.innerHTML = '';
   channels.map(renderChannel).map(channel => channelsContainer.append(channel));
-  addButtonsHandler(handler);
 };
 
 // App
@@ -183,14 +180,20 @@ const createInfo = (status, text) => {
 };
 
 const renderAppInfo = ([status, text]) => {
+  const infoContainer = getInfoContainer();
   infoContainer.innerHTML = '';
   const elem = createInfo(status, text);
   infoContainer.append(elem);
 };
 
+const addButtonsHandler = (handler) => {
+  const viewButtons = getViewButtons();
+  viewButtons.forEach(button => button.addEventListener('click', handler));
+};
+
 export {
-  input,
-  form,
+  getInput,
+  getForm,
   renderInputUpdate,
   renderInputClear,
   renderInputDisable,
@@ -198,4 +201,5 @@ export {
   renderChannels,
   renderAppInfo,
   renderPostModal,
+  addButtonsHandler,
 };
