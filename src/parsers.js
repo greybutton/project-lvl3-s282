@@ -1,4 +1,4 @@
-const parserRSS = (data) => {
+const parseRSS = (data) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(data, 'text/xml');
   const [channelNode] = doc.getElementsByTagName('channel');
@@ -24,4 +24,4 @@ const parserRSS = (data) => {
   return channel;
 };
 
-export default parserRSS;
+export default parseRSS;

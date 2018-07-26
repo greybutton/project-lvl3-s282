@@ -16,7 +16,7 @@ const state = {
   inputValue: getInput().value,
   channelLinks: [],
   channels: [],
-  update: new Date(),
+  updatedAt: new Date(),
   info: ['', ''],
   inputValidation: '',
   inputStatus: null,
