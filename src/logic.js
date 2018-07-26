@@ -59,21 +59,35 @@ const handlerSubmit = (e) => {
     });
 };
 
+const getChannel = (value, index) => {
+  const stateChannel = state.channels[index];
+  const url = getProxedURL(value);
+  return new Promise((resolve, reject) => {
+    axios
+      .get(url)
+      .then((response) => {
+        const { data } = response;
+        const channel = parseRSS(data);
+        resolve(channel);
+      })
+      .catch((error) => {
+        console.log(error);
+        reject(stateChannel);
+      });
+  });
+};
+
 const refresh = () => {
   if (state.channelLinks.length === 0) {
     window.setTimeout(refresh, 5000);
     return;
   }
-  const channelsUrls = state.channelLinks.map(url => axios.get(getProxedURL(url)));
-  axios
-    .all(channelsUrls)
-    .then((responses) => {
-      const channels = responses.map(({ data }) => {
-        const channel = parseRSS(data);
-        return channel;
-      });
-      return channels;
-    })
+  const channelsPromises = state.channelLinks.map((url, index) => getChannel(url, index));
+  channelsPromises
+    .reduce(
+      (accPromise, promise) => accPromise.then(acc => promise.then(channel => [...acc, channel])),
+      Promise.resolve([]),
+    )
     .then((channels) => {
       const newChannels = channels.reduce((acc, channel, index) => {
         if (channel.posts.length > 0) {
