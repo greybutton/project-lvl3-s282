@@ -59,64 +59,45 @@ const handlerSubmit = (e) => {
     });
 };
 
-const getChannel = (value, index) => {
-  const stateChannel = state.channels[index];
-  const url = getProxedURL(value);
-  return new Promise((resolve, reject) => {
-    axios
-      .get(url)
-      .then((response) => {
-        const { data } = response;
-        const channel = parseRSS(data);
-        resolve(channel);
-      })
-      .catch((error) => {
-        console.log(error);
-        reject(stateChannel);
-      });
-  });
+const updateChannels = (channel, index) => {
+  const channelNewPosts = channel.posts.filter(
+    post => new Date(post.date) > new Date(state.updatedAt),
+  );
+  if (channelNewPosts.length === 0) {
+    return;
+  }
+  const channelFromState = state.channels[index];
+  const newChannel = channelFromState;
+  newChannel.posts = [...channelNewPosts, ...channelFromState.posts];
+  const start = state.channels.slice(0, index);
+  const end = state.channels.slice(index + 1);
+  const newChannels = [...start, newChannel, ...end];
+  state.channels = newChannels;
 };
+
+const getChannel = (url, index) => axios
+  .get(url)
+  .then((response) => {
+    const { data } = response;
+    const channel = parseRSS(data);
+    updateChannels(channel, index);
+  })
+  .catch(error => console.log(error));
 
 const refresh = () => {
   if (state.channelLinks.length === 0) {
     window.setTimeout(refresh, 5000);
     return;
   }
-  const channelsPromises = state.channelLinks.map((url, index) => getChannel(url, index));
-  channelsPromises
-    .reduce(
-      (accPromise, promise) => accPromise.then(acc => promise.then(channel => [...acc, channel])),
-      Promise.resolve([]),
-    )
-    .then((channels) => {
-      const newChannels = channels.reduce((acc, channel, index) => {
-        if (channel.posts.length > 0) {
-          const { channels: channelsFromState } = state;
-          const channelFromState = channelsFromState[index];
-          const channelNewPosts = channel.posts.filter(
-            post => new Date(post.date) > new Date(state.updatedAt),
-          );
-          const newChannel = channel;
-          newChannel.posts = [...channelNewPosts, ...channelFromState.posts];
-          const start = acc.slice(0, index);
-          const end = acc.slice(index + 1);
-          const newAcc = [...start, newChannel, ...end];
-          return newAcc;
-        }
-        return acc;
-      }, state.channels);
-      return newChannels;
-    })
-    .then((newChannels) => {
-      state.channels = newChannels;
-    })
-    .catch((error) => {
-      console.log(error);
-    })
-    .finally(() => {
-      state.updatedAt = new Date();
-      window.setTimeout(refresh, 5000);
-    });
+  const urls = state.channelLinks.map(url => getProxedURL(url));
+  const promise = urls.reduce(
+    (acc, url, index) => acc.then(() => getChannel(url, index)),
+    Promise.resolve(),
+  );
+  promise.finally(() => {
+    state.updatedAt = new Date();
+    window.setTimeout(refresh, 5000);
+  });
 };
 
 export { refresh, handleInput, handlerSubmit };
