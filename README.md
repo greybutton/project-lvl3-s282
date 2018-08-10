@@ -1,14 +1,27 @@
 [![Build Status][build-badge]][build]
 
-Netlify: [https://naughty-swanson-1d6428.netlify.com/](https://naughty-swanson-1d6428.netlify.com/)
+## Description
 
-Surge: [http://lyrical-boat.surge.sh/](http://lyrical-boat.surge.sh/)
+RSS Reader with automatic updating.
 
-## Setup
+Visit:
+
+- Netlify: [https://naughty-swanson-1d6428.netlify.com/](https://naughty-swanson-1d6428.netlify.com/)
+- Surge: [http://lyrical-boat.surge.sh/](http://lyrical-boat.surge.sh/)
+
+RSS to test:
+
+- http://lorem-rss.herokuapp.com/feed
+- https://ru.hexlet.io/blog.rss
+- http://lambda-the-ultimate.org/rss.xml
+
+## Development
+
+### Setup
 
 `make install`
 
-## Run
+### Run
 
 `make develop`
 
